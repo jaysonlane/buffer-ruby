@@ -18,7 +18,6 @@ Gem::Specification.new do |gem|
   gem.add_dependency "faraday"
   gem.add_dependency "multi_json"
   gem.add_dependency "i18n"
-  gem.add_dependency "active_support"
   gem.add_dependency "addressable"
 
   gem.add_development_dependency "rspec", "~> 2.7"
