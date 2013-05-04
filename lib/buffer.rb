@@ -4,7 +4,11 @@ require 'multi_json'
 require 'addressable/uri'
 require 'active_support/core_ext'
 
+
 module Buffer
+
+  class InvalidToken < StandardError; end
+
   class Client
 
     attr_reader :token
@@ -18,7 +22,7 @@ module Buffer
       if token.kind_of? String
         @token = token
       else
-        raise ArgumentError, "token must be a string"
+        raise Buffer::InvalidToken, "token must be a string"
       end
 
       @conn = Faraday.new :url => 'https://api.bufferapp.com/1/'
@@ -58,6 +62,7 @@ module Buffer
       # Return nil if the body is less that 2 characters long,
       # ie. '{}' is the minimum valid JSON, or if the decoder
       # raises an exception when passed mangled JSON
+      # TODO: replace nil with exception or null object
       begin
         MultiJson.load res.body if res.body && res.body.length >= 2
       rescue

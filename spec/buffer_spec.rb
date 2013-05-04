@@ -10,15 +10,15 @@ describe Buffer::Client do
     end
 
     it 'rejects an integer token' do
-      lambda { client = Buffer::Client.new 123 }.should raise_error
+      lambda { client = Buffer::Client.new 123 }.should raise_error(Buffer::InvalidToken)
     end
 
     it 'rejects an array token' do
-      lambda { client = Buffer::Client.new [123, 'hello'] }.should raise_error
+      lambda { client = Buffer::Client.new [123, 'hello'] }.should raise_error(Buffer::InvalidToken)
     end
 
     it 'rejects an hash token' do
-      lambda { client = Buffer::Client.new :test => 123 }.should raise_error
+      lambda { client = Buffer::Client.new :test => 123 }.should raise_error(Buffer::InvalidToken)
     end
 
   end
