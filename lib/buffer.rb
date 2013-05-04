@@ -8,6 +8,7 @@ require 'active_support/core_ext'
 module Buffer
 
   class InvalidToken < StandardError; end
+  class InvalidResponse < StandardError; end
 
   class Client
 
@@ -19,11 +20,10 @@ module Buffer
     #
     # token - string access token for use with all API requests
     def initialize(token)
-      if token.kind_of? String
-        @token = token
-      else
+      unless token.kind_of? String
         raise Buffer::InvalidToken, "token must be a string"
       end
+      @token = token
 
       @conn = Faraday.new :url => 'https://api.bufferapp.com/1/'
       @addr = Addressable::URI.new
@@ -50,22 +50,53 @@ module Buffer
     # url - enpoint uri, with or without .json
     # data - hash or array of data to be sent in POST body
     def api(type, uri, data = {})
-      uri << '.json' unless uri =~ /\.json$/
-      res = if type == :get
-        @conn.get uri, :access_token => @token
-      elsif type == :post
-        @conn.post do |req|
-          req.url uri, :access_token => @token
-          req.body = data.to_query
-        end
-      end
+      uri = append_json_to_url(uri)
+      res = case type
+            when :get
+              get_request(uri)
+            when :post
+              post_request(uri, data)
+            end
       # Return nil if the body is less that 2 characters long,
       # ie. '{}' is the minimum valid JSON, or if the decoder
       # raises an exception when passed mangled JSON
-      # TODO: replace nil with exception or null object
       begin
-        MultiJson.load res.body if res.body && res.body.length >= 2
+        # TODO: Replace nil exception handling with proper named exceptions
+        load_result(res)
       rescue
+      end
+    end
+
+    def post_request(uri, data)
+      @conn.post do |req|
+        req.url uri, :access_token => @token
+        req.body = data.to_query
+      end
+    end
+
+    def get_request(uri)
+      @conn.get uri, :access_token => @token
+    end
+
+    def load_result(res)
+      reject_invalid_response(res)
+      MultiJson.load res.body
+    end
+
+    def reject_invalid_response(res)
+      raise Buffer::BlankResponse unless res.body
+      raise Buffer::InvalidResponse unless valid_content_length?(res)
+    end
+
+    def valid_content_length?(res)
+      res.body.length >= 2
+    end
+
+    def append_json_to_url(uri)
+      if uri =~ %r{\.json$}
+        uri
+      else
+        "#{uri}.json"
       end
     end
 
