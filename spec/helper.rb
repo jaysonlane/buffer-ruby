@@ -39,5 +39,5 @@ def fixture(file)
 end
 
 def fixture_contents(file)
-  File.open(fixture_path + '/' + file) { |f| f.read }
+  File.open(fixture_path + '/' + file).read.chomp!
 end

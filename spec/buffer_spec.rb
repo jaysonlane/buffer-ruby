@@ -166,6 +166,11 @@ describe Buffer::Client do
       end
 
       it 'should return nil when passes crap' do
+        stub_request(:post, "https://api.bufferapp.com/1/updates/create.json?access_token=some_token").
+                 with(:body => {"profile_ids"=>["fdf", "1"], "text"=>["a237623", "asb"]},
+                      :headers => {'Accept'=>'*/*', 'Content-Type'=>'application/x-www-form-urlencoded', 'User-Agent'=>'Faraday v0.8.7'}).
+                 to_return(:status => 200, :body => "", :headers => {})
+
         res = subject.api :post,
                           'updates/create.json',
                           :text => [:a237623, 'asb'],
