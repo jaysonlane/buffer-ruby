@@ -139,7 +139,8 @@ describe Buffer::Client do
         a_post('updates/create.json').
           with(
             :query => {:access_token => 'some_token'},
-            :body => fixture_contents('create_body.txt')).
+            :body => "media%5Blink%5D=http%3A%2F%2Fgoogle.com&profile_ids%5B%5D=4eb854340acb04e870000010&profile_ids%5B%5D=4eb9276e0acb04bb81000067&text=This+is+an+example+update"
+            ).
           should have_been_made
       end
 
@@ -248,9 +249,9 @@ describe Buffer::Client do
                    :media => {:link => "http://google.com"}
       a_post('updates/create.json').
         with(
-          :query => {:access_token => 'some_token'},
-          :body => fixture_contents('create_body.txt')).
-        should have_been_made
+            :query => {:access_token => 'some_token'},
+            :body => "media%5Blink%5D=http%3A%2F%2Fgoogle.com&profile_ids%5B%5D=4eb854340acb04e870000010&profile_ids%5B%5D=4eb9276e0acb04bb81000067&text=This+is+an+example+update"
+        ).should have_been_made
     end
 
   end
