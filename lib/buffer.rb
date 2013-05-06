@@ -11,8 +11,17 @@ require 'buffer/version'
 
 module Buffer
 
-  # class Profiles < Client
-  # end
+  class Profiles < Client
+    def initialize(token)
+      super
+      @cache = {}
+    end
+
+    def cache
+      @cache[:profiles] ||= get 'profiles'
+    end
+
+  end
 
   # class Updates < Client
   # end

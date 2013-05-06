@@ -5,6 +5,11 @@ describe Buffer::User do
   describe 'new' do
 
     it 'accepts a token' do
+      stub_request(:get, "https://api.bufferapp.com/1/user.json?access_token=some_token").
+               with(:headers => {'Accept'=>'*/*', 'Accept-Encoding'=>'gzip;q=1.0,deflate;q=0.6,identity;q=0.3', 'User-Agent'=>'Faraday v0.8.7'}).
+               to_return(:status => 200,
+                         :body => fixture('user.json'),
+                         :headers => {})
       user = Buffer::User.new 'some_token'
       user.token.should eq('some_token')
     end
@@ -90,7 +95,7 @@ describe Buffer::User do
         id = subject.id
         a_get('user.json').
           with(:query => {:access_token => 'some_token'}).
-          should have_been_made.times(2)
+          should have_been_made.times(3)
       end
 
     end
