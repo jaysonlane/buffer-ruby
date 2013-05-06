@@ -13,25 +13,45 @@ module Buffer
 
   class Profiles < Client
     def initialize(token)
-      super
       @cache = {}
+      @klass_name = "profiles"
+      super
     end
 
     def cache
-      @cache[:profiles] ||= get 'profiles'
+      @cache[@klass_name.to_sym] ||= get @klass_name
     end
 
   end
 
-  # class Updates < Client
-  # end
+  class Updates < Client
+    def initialize(token)
+      @cache = {}
+      @klass_name = "updates"
+      super
+    end
+
+    def cache
+      @cache[@klass_name.to_sym] ||= get @klass_name
+    end
+  end
 
   # class Links < Client
   # end
 
 
-  # class Info < Client
-  # end
+  class Info < Client
+    def initialize(token)
+      @cache = {}
+      @klass_name = "info/configuration"
+      super
+    end
+
+    def cache
+      @cache[@klass_name.to_sym] ||= get @klass_name
+    end
+
+  end
 
   # class ErrorCodes
   # end
