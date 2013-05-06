@@ -9,6 +9,8 @@ module Buffer
 
   class InvalidToken < StandardError; end
   class InvalidResponse < StandardError; end
+  class BlankResponse < StandardError; end
+  class Buffer::InvalidJSON < StandardError; end
 
   class Client
 
@@ -63,7 +65,8 @@ module Buffer
       begin
         # TODO: Replace nil exception handling with proper named exceptions
         load_result(res)
-      rescue
+      rescue => e
+        raise Buffer::InvalidResponse, "Response was blank\n #{e}"
       end
     end
 
@@ -80,7 +83,11 @@ module Buffer
 
     def load_result(res)
       reject_invalid_response(res)
-      MultiJson.load res.body
+      begin
+        MultiJson.load res.body
+      rescue => e
+        raise Buffer::InvalidJSON, "MultiJson in load_result() was unable to parse the json data"
+      end
     end
 
     def reject_invalid_response(res)

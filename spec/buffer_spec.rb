@@ -78,13 +78,13 @@ describe Buffer::Client do
       end
 
       it 'returns nil from non existent endpoint' do
-        res = subject.api :get, 'non_existent'
-        res.should eq(nil)
+        lambda { subject.api :get, 'non_existent' }
+          .should raise_error(Buffer::InvalidResponse)
       end
 
       it 'returns nil from mangled data' do
-        res = subject.api :get, 'mangled'
-        res.should eq(nil)
+        lambda { subject.api :get, 'mangled' }
+          .should raise_error(Buffer::InvalidResponse)
       end
 
     end
@@ -156,14 +156,14 @@ describe Buffer::Client do
       end
 
       it 'should return nil from non existent endpoint' do
-        res = subject.api :post,
+        lambda { subject.api :post,
                           'updates/creatify.json',
                           :text => "This is an example update",
                           :profile_ids => [
                             '4eb854340acb04e870000010',
                             '4eb9276e0acb04bb81000067'],
                           :media => {:link => "http://google.com"}
-        res.should eq(nil)
+        }.should raise_error(Buffer::InvalidResponse)
       end
 
       it 'should return nil when passes crap' do
@@ -172,11 +172,11 @@ describe Buffer::Client do
                       :headers => {'Accept'=>'*/*', 'Content-Type'=>'application/x-www-form-urlencoded', 'User-Agent'=>'Faraday v0.8.7'}).
                  to_return(:status => 200, :body => "", :headers => {})
 
-        res = subject.api :post,
+        lambda { subject.api :post,
                           'updates/create.json',
                           :text => [:a237623, 'asb'],
                           :profile_ids => ['fdf', '1']
-        res.should eq(nil)
+        }.should raise_error(Buffer::InvalidResponse)
       end
 
     end
