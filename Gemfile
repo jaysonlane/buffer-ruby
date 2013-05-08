@@ -1,12 +1,8 @@
-source :rubygems
+source 'https://rubygems.org'
 
-gem 'faraday'
-gem 'activesupport'
-# gem 'faraday_middleware'
+gemspec
 
 group :development do
-  # gem 'buffer', :github => "zph/buffer-ruby"
-  gem 'buffer', :path => '/Users/zander/Dropbox/scripts/bufferapp/buffer-ruby'
   gem 'pry-full'
   gem 'guard'
   gem 'rb-fsevent'
@@ -15,8 +11,6 @@ group :development do
   gem 'guard-rspec'
   gem 'guard-cucumber'
   gem 'webmock'
-  # gem 'vcr'
-  # gem 'fakeweb'
   gem 'simplecov'
 end
 
